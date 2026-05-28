@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Add Entry — TimetableMS{% endblock %}
+{% block content %}
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div style="margin-bottom:15px;">
+      {% for category, message in messages %}
+
+        {% if category == 'error' %}
+          <div style="padding:10px; border-radius:6px; margin-bottom:8px; color:white; background-color:#e5533d;">
+            {{ message }}
+          </div>
+
+        {% elif category == 'success' %}
+          <div style="padding:10px; border-radius:6px; margin-bottom:8px; color:white; background-color:#2ea44f;">
+            {{ message }}
+          </div>
+
+        {% else %}
+          <div style="padding:10px; border-radius:6px; margin-bottom:8px; color:white; background-color:#444;">
+            {{ message }}
+          </div>
+
+        {% endif %}
+
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %} -->
+<div class="page-header">
+  <h2>Add Timetable Entry</h2>
+  <p><p>Conflict checks: faculty, room, and class cannot overlap in the same time slot</p></p>
+</div>
+
+<div class="card" style="max-width:720px;">
+  <div class="card-title">📝 New Schedule Entry</div>
+
+  <form method="POST" action="/timetable/add">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Class / Batch</label>
+        <select name="class_id" required>
+          <option value="">Select class...</option>
+          {% for c in classes %}
+            <option value="{{ c.class_id }}">{{ c.class_name }} (Sem {{ c.semester }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Subject</label>
+        <select name="subject_id" required>
+          <option value="">Select subject...</option>
+          {% for s in subjects %}
+            <option value="{{ s.subject_id }}">{{ s.subject_name }} ({{ s.credits }} cr)</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Faculty</label>
+        <select name="faculty_id" required>
+          <option value="">Select faculty...</option>
+          {% for f in faculty %}
+            <option value="{{ f.faculty_id }}">{{ f.faculty_name }} · {{ f.designation }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Classroom</label>
+        <select name="room_id" required>
+          <option value="">Select room...</option>
+          {% for r in classrooms %}
+            <option value="{{ r.room_id }}">{{ r.room_number }} (cap: {{ r.capacity }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1;">
+        <label>Time Slot</label>
+        <select name="slot_id" required>
+          <option value="">Select time slot...</option>
+          {% for t in timeslots %}
+            <option value="{{ t.slot_id }}">{{ t.day }} · {{ t.start_time }} – {{ t.end_time }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">✅ Add Entry</button>
+      <a href="/timetable" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<div class="card" style="max-width:720px; border-color:rgba(243,156,18,0.3);">
+  <div class="card-title" style="color:var(--warn);">⚠️ Conflict Rules (auto-enforced)</div>
+  <ul style="color:var(--muted); font-size:14px; line-height:2; list-style:none; padding:0;">
+    <li>🔸 A faculty member cannot be assigned to two classes in the same time slot</li>
+    <li>🔸 A classroom cannot be double-booked in the same time slot</li>
+    <li>🔸 A class cannot have two subjects scheduled in the same time slot</li>
+  </ul>
+</div>
+
+{% endblock %}

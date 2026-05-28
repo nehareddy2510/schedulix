@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — TimeTableScheduler{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h2>Dashboard</h2>
+    <p>Welcome to TimeTableScheduler — your academic scheduling system</p>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card" style="--c:#00b4d8">
+    <span class="stat-icon">📅</span>
+    <div class="stat-num">{{ total_entries }}</div>
+    <div class="stat-label">Scheduled Classes</div>
+  </div>
+  <div class="stat-card" style="--c:#bc8cff">
+    <span class="stat-icon">👩‍🏫</span>
+    <div class="stat-num">{{ total_faculty }}</div>
+    <div class="stat-label">Faculty Members</div>
+  </div>
+  <div class="stat-card" style="--c:#3fb950">
+    <span class="stat-icon">🎓</span>
+    <div class="stat-num">{{ total_classes }}</div>
+    <div class="stat-label">Class Batches</div>
+  </div>
+  <div class="stat-card" style="--c:#d29922">
+    <span class="stat-icon">📚</span>
+    <div class="stat-num">{{ total_subjects }}</div>
+    <div class="stat-label">Subjects</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="dot"></span> Quick Actions</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:9px;">
+      <a href="/timetable/add" class="btn btn-primary" style="justify-content:center;">+ Add Timetable Entry</a>
+      <a href="/timetable"     class="btn btn-ghost"   style="justify-content:center;">≡ View Timetable</a>
+      <a href="/freeslots"     class="btn btn-ghost"   style="justify-content:center;">◎ Find Free Slots</a>
+      <a href="/workload"      class="btn btn-ghost"   style="justify-content:center;">↑ Faculty Workload</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="dot"></span> System Info</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--text-sec);">
+      <div style="display:flex; justify-content:space-between;">
+        <span>Application</span>
+        <span style="color:var(--accent); font-family:var(--mono);">TimeTableScheduler</span>
+      </div>
+      <div class="divider" style="margin:4px 0;"></div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>Database</span>
+        <span style="color:var(--text); font-family:var(--mono);">Oracle SQL*Plus</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>Backend</span>
+        <span style="color:var(--text); font-family:var(--mono);">Python Flask</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>DB Status</span>
+        <span style="color:var(--warn); font-family:var(--mono);">Connected</span>
+      </div>
+      <div class="divider" style="margin:4px 0;"></div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>Nishtha Gupta</span>
+        <span style="font-family:var(--mono);">240962476</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>Y. Neha Reddy</span>
+        <span style="font-family:var(--mono);">240962510</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Free Slot Finder — TimetableMS{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h2>Smart Free Slot Finder</h2>
+  <p>Find available time slots based on faculty, class, or room availability</p>
+</div>
+
+<div class="card" style="max-width:720px;">
+  <div class="card-title">🔍 Search Availability</div>
+  <form method="GET" action="/freeslots">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Faculty (optional)</label>
+        <select name="faculty_id">
+          <option value="">Any Faculty</option>
+          {% for f in faculty %}
+            <option value="{{ f.faculty_id }}" {% if sel_faculty == f.faculty_id|string %}selected{% endif %}>
+              {{ f.faculty_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Class (optional)</label>
+        <select name="class_id">
+          <option value="">Any Class</option>
+          {% for c in classes %}
+            <option value="{{ c.class_id }}" {% if sel_class == c.class_id|string %}selected{% endif %}>
+              {{ c.class_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Room (optional)</label>
+        <select name="room_id">
+          <option value="">Any Room</option>
+          {% for r in classrooms %}
+            <option value="{{ r.room_id }}" {% if sel_room == r.room_id|string %}selected{% endif %}>
+              {{ r.room_number }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" style="justify-content:flex-end;">
+        <label>&nbsp;</label>
+        <button type="submit" class="btn btn-primary">🔍 Find Slots</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% if results %}
+<div class="card">
+  <div class="card-title">
+    📋 Slot Availability
+    <span style="color:var(--success); font-size:13px; font-weight:400; margin-left:8px;">
+      {{ results | selectattr('available') | list | length }} free slots
+    </span>
+    <span style="color:var(--error); font-size:13px; font-weight:400; margin-left:8px;">
+      · {{ results | rejectattr('available') | list | length }} taken
+    </span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Reason (if taken)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for slot in results %}
+        <tr>
+          <td><span class="day-chip day-{{ slot.day }}">{{ slot.day }}</span></td>
+          <td>{{ slot.start_time }} – {{ slot.end_time }}</td>
+          <td>
+            {% if slot.available %}
+              <span class="badge badge-green">✅ Available</span>
+            {% else %}
+              <span class="badge badge-red">❌ Taken</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--muted); font-size:13px;">
+            {% if slot.reasons %}{{ slot.reasons | join(', ') }}{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if slot.available %}
+              <a href="/timetable/add" class="btn btn-primary btn-sm">➕ Schedule</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% elif request.args %}
+<div class="card">
+  <div class="empty-state">
+    <div class="icon">🎉</div>
+    <p>All slots are available for your selection!</p>
+  </div>
+</div>
+{% else %}
+<div class="card">
+  <div class="empty-state">
+    <div class="icon">👆</div>
+    <p>Select at least one filter above and click Find Slots.</p>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

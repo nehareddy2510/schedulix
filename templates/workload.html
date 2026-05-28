@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Faculty Workload — TimetableMS{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h2>Faculty Workload Analyzer</h2>
+  <p>Hours per faculty member based on current timetable entries</p>
+</div>
+
+{% if workload %}
+<div class="stats-grid">
+  <div class="stat-card" style="--accent-color:#4f8ef7">
+    <div class="stat-num">{{ workload|length }}</div>
+    <div class="stat-label">Active Faculty</div>
+  </div>
+  <div class="stat-card" style="--accent-color:#e74c3c">
+    <div class="stat-num">{{ workload[0].hours }}</div>
+    <div class="stat-label">Max Hours ({{ workload[0].faculty_name.split()[1] }})</div>
+  </div>
+  <div class="stat-card" style="--accent-color:#2ecc71">
+    <div class="stat-num">{{ workload[-1].hours }}</div>
+    <div class="stat-label">Min Hours</div>
+  </div>
+  <div class="stat-card" style="--accent-color:#f39c12">
+    <div class="stat-num">
+      {% set total = workload | sum(attribute='hours') %}
+      {{ (total / workload|length) | round(1) }}
+    </div>
+    <div class="stat-label">Avg Hours / Faculty</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 Workload Breakdown</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Faculty</th>
+          <th>Weekly Hours</th>
+          <th>Load Level</th>
+          <th>Subjects</th>
+          <th>Classes</th>
+          <th>Load Bar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in workload %}
+        <tr>
+          <td><strong>{{ w.faculty_name }}</strong></td>
+          <td>{{ w.hours }} hr{{ 's' if w.hours != 1 }}</td>
+          <td>
+            {% if w.load == 'Heavy' %}
+              <span class="badge badge-red">🔴 Heavy</span>
+            {% elif w.load == 'Moderate' %}
+              <span class="badge badge-yellow">🟡 Moderate</span>
+            {% else %}
+              <span class="badge badge-green">🟢 Light</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--muted); font-size:13px;">{{ w.subjects | join(', ') }}</td>
+          <td style="color:var(--muted); font-size:13px;">{{ w.classes | join(', ') }}</td>
+          <td style="min-width:120px;">
+            <div style="background:var(--surface2); border-radius:4px; height:8px; overflow:hidden;">
+              <div style="height:100%; width:{{ [w.hours * 20, 100]|min }}%;
+                background: {% if w.load == 'Heavy' %}var(--error){% elif w.load == 'Moderate' %}var(--warn){% else %}var(--success){% endif %};
+                border-radius:4px; transition:width 0.3s;"></div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% else %}
+<div class="card">
+  <div class="empty-state">
+    <div class="icon">📭</div>
+    <p>No timetable entries yet. Add some entries first.</p>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

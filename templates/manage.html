@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — TimetableMS{% endblock %}
+{% block content %}
+
+<div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+  <div>
+    <h2>{{ title }}</h2>
+    <p>{{ items|length }} record(s) in database</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📋 {{ title }} List</div>
+  {% if items %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% for field in fields %}
+          <th>{{ field.replace('_', ' ').title() }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          {% for field in fields %}
+          <td>
+            {% if field.endswith('_id') %}
+              <span class="badge badge-blue">#{{ item[field] }}</span>
+            {% else %}
+              {{ item[field] }}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">📭</div>
+    <p>No {{ title.lower() }} records found.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

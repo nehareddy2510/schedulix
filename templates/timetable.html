@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Timetable — TimetableMS{% endblock %}
+{% block content %}
+
+<div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+  <div>
+    <h2>Timetable</h2>
+    <p>View class-wise, faculty-wise, or room-wise schedules</p>
+  </div>
+  <a href="/timetable/add" class="btn btn-primary">➕ Add Entry</a>
+</div>
+
+<!-- FILTERS -->
+<div class="card">
+  <div class="card-title">🔎 Filter Timetable</div>
+  <form method="GET" action="/timetable">
+    <div class="filter-bar">
+      <div class="form-group">
+        <label>By Class</label>
+        <select name="class_id">
+          <option value="">All Classes</option>
+          {% for c in classes %}
+            <option value="{{ c.class_id }}" {% if filter_class == c.class_id|string %}selected{% endif %}>
+              {{ c.class_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>By Faculty</label>
+        <select name="faculty_id">
+          <option value="">All Faculty</option>
+          {% for f in faculty %}
+            <option value="{{ f.faculty_id }}" {% if filter_faculty == f.faculty_id|string %}selected{% endif %}>
+              {{ f.faculty_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>By Room</label>
+        <select name="room_id">
+          <option value="">All Rooms</option>
+          {% for r in classrooms %}
+            <option value="{{ r.room_id }}" {% if filter_room == r.room_id|string %}selected{% endif %}>
+              {{ r.room_number }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" style="justify-content:flex-end;">
+        <label>&nbsp;</label>
+        <div style="display:flex;gap:8px;">
+          <button type="submit" class="btn btn-primary">Filter</button>
+          <a href="/timetable" class="btn btn-ghost">Clear</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+  <div class="card-title">
+    📋 Schedule Entries
+    <span style="color:var(--muted); font-weight:400; font-size:13px; margin-left:8px;">
+      {{ entries|length }} result(s)
+    </span>
+  </div>
+
+  {% if entries %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Day & Time</th>
+          <th>Class</th>
+          <th>Subject</th>
+          <th>Faculty</th>
+          <th>Room</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+        <tr>
+          <td>
+            <span class="day-chip day-{{ e.day }}">{{ e.day }}</span>
+            <br>
+            <span style="color:var(--muted); font-size:12px;">{{ e.start_time }} – {{ e.end_time }}</span>
+          </td>
+          <td><span class="badge badge-blue">{{ e.class_name }}</span></td>
+          <td>{{ e.subject_name }}</td>
+          <td>{{ e.faculty_name }}</td>
+          <td><span class="badge badge-purple">{{ e.room_number }}</span></td>
+          <td>
+            <a href="/timetable/delete/{{ e.timetable_id }}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this entry?')">🗑 Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">📭</div>
+    <p>No timetable entries found for the selected filters.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
